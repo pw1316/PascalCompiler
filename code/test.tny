@@ -1,0 +1,14 @@
+program lala;
+var
+	i:record
+		a,b:integer;
+	end;
+function add(a,b:integer):integer;
+var i:integer;
+begin
+	add:=a+b;
+end;
+
+begin
+	i.a:=5;
+end.
