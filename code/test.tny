@@ -1,4 +1,5 @@
 program lala;
+const a=10;
 var
 	i:record
 		a,b:integer;
