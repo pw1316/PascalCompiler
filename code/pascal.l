@@ -63,17 +63,6 @@ id {alphabet}({alphabet}|{digit})*
 "readln" {return SYSP_READLN;}
 "read" {return SYSP_READ;}
 
-"abs" {return SYSF_ABS;}
-"sqr" {return SYSF_SQR;}
-"sqrt" {return SYSF_SQRT;}
-"trunc" {return SYSF_TRUNC;}
-"round" {return SYSF_ROUND;}
-"ord" {return SYSF_ORD;}
-"chr" {return SYSF_CHR;}
-"pred" {return SYSF_PRED;}
-"succ" {return SYSF_SUCC;}
-"odd" {return SYSF_ODD;}
-
 "program" {return PROGRAM;}
 "type" {return TYPE;}
 "var" {return VAR;}

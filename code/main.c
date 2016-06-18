@@ -18,6 +18,7 @@ symbolNode * symbolTable = NULL;
 int ModuleLbl = 0;
 int LabelLbl = 0;
 int JumpLbl = 0;
+int StrBuf = 0;
 
 char programName[100];
 
@@ -73,7 +74,15 @@ int main(int argc, char* argv[]){
 	printf("Create table Successfully!\n");
 
 	out = fopen("a.asm","w");
+	fprintf(out, ".text\n");
+	fprintf(out, "  j MAIN\n");
 	generateCode(syntaxTree,symbolTable);
+	fprintf(out, ".data\n");
+	while(StrBuf){
+		fprintf(out, "BUF%d: .space 256\n",StrBuf-1);
+		StrBuf--;
+	}
 	fclose(out);
+	printVarTbl(symbolTable,0);
 	return 0;
 }

@@ -2,6 +2,7 @@
 #define __SEMATIC_H__
 
 #include "global.h"
+#include "pascal.tab.h"
 
 typedef union{int d;float f;char c;char* str;} cValue;
 typedef enum{cIntT,cBoolT,cCharT,cRealT,cStringT,cArrayT,cRecordT,cVoidT} cType;
@@ -78,6 +79,7 @@ void printProcTbl(symbolNode * tbl,int space);
 
 int analyze(TreePtr syntaxtree);
 typeNode * getSimpleType(TreePtr node,symbolNode * tbl,int simpleID);
-typeNode * getType(TreePtr node,symbolNode * tbl);
+typeNode * getExprType(TreePtr node,symbolNode * tbl);
 int checkType(TreePtr node,symbolNode * tbl);
+int typeEqual(typeNode * node1,typeNode * node2);
 #endif

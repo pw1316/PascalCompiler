@@ -1,15 +1,13 @@
 program lala;
-const a=10;
+const con=10;
 var
-	i:record
-		a,b:integer;
-	end;
+	a,b,c:integer;
 function add(a,b:integer):integer;
-var i:integer;
 begin
 	add:=a+b;
 end;
-
 begin
-	i.a:=5;
+	a:=con;
+	b:=5;
+	c:=add(a,b);
 end.

@@ -19,7 +19,6 @@ int yyerror(char*);
 %token TRUE FALSE MAXINT
 %token SYST_BOOLEAN SYST_CHAR SYST_INTEGER SYST_REAL SYST_STRING
 %token SYSP_WRITELN SYSP_WRITE SYSP_READLN SYSP_READ
-%token SYSF_ABS SYSF_SQR SYSF_SQRT SYSF_TRUNC SYSF_ROUND SYSF_ORD SYSF_CHR SYSF_PRED SYSF_SUCC SYSF_ODD
 %token PROGRAM TYPE VAR CONST ARRAY RECORD FUNCTION PROCEDURE OF PBEGIN END IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE GOTO
 %token ID INTEGER REAL CHAR STRING
 %%
@@ -80,8 +79,8 @@ const_value	:INTEGER {	$$ = newExprNode(IntK);
 						else $$ -> attr.charval = ((char*)$1)[1];
 						$$ -> lineno = lineno;}
 			|STRING {	$$ = newExprNode(StringK);
-						tokenString[strlen(tokenString) - 1] = 0;
-						$$ -> attr.strval = copyString(tokenString+1);
+						((char*)$1)[strlen((char*)$1) - 1] = 0;
+						$$ -> attr.strval = (char*)$1+1;
 						$$ -> lineno = lineno;}
 			|TRUE {		$$ = newExprNode(BoolK);
 						$$ -> attr.intval = 1;
@@ -487,56 +486,6 @@ factor 	: ID args
 			{	$$ = newExprNode(FactorK);
 				$$ -> attr.name = (char*)$1;
 				$$ -> child[0] = $2;}
-		| SYSF_ABS args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(4);
-				strcpy($$ -> attr.name,"abs");
-				$$ -> child[0] = $2;}
-		| SYSF_SQR args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(4);
-				strcpy($$ -> attr.name,"sqr");
-				$$ -> child[0] = $2;}
-		| SYSF_SQRT args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(5);
-				strcpy($$ -> attr.name,"sqrt");
-				$$ -> child[0] = $2;}
-		| SYSF_TRUNC args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(6);
-				strcpy($$ -> attr.name,"trunc");
-				$$ -> child[0] = $2;}
-		| SYSF_ROUND args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(6);
-				strcpy($$ -> attr.name,"round");
-				$$ -> child[0] = $2;}
-		| SYSF_ORD args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(4);
-				strcpy($$ -> attr.name,"ord");
-				$$ -> child[0] = $2;}
-		| SYSF_CHR args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(4);
-				strcpy($$ -> attr.name,"chr");
-				$$ -> child[0] = $2;}
-		| SYSF_PRED args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(5);
-				strcpy($$ -> attr.name,"pred");
-				$$ -> child[0] = $2;}
-		| SYSF_SUCC args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(5);
-				strcpy($$ -> attr.name,"succ");
-				$$ -> child[0] = $2;}
-		| SYSF_ODD args
-			{	$$ = newExprNode(FactorK);
-				$$ -> attr.name = (char*)malloc(4);
-				strcpy($$ -> attr.name,"odd");
-				$$ -> child[0] = $2;}
 		| const_value
 			{	$$ = newExprNode(FactorK);
 				$$ -> child[1] = $1;}
@@ -552,7 +501,7 @@ factor 	: ID args
 		| ID LB expression RB
 			{	$$ = newExprNode(FactorK);
 				$$ -> attr.name = (char*)$1;
-				$$ -> child[2] = $1;}
+				$$ -> child[2] = $3;}
 		| ID DOT ID
 			{	$$ = newExprNode(FactorK);
 				$$ -> attr.name = (char*)$1;

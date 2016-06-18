@@ -616,7 +616,6 @@ int createProcTbl(TreePtr proc_part,symbolNode * tbl){
 	else{
 		procL->returntype = cVoidT;
 	}
-
 	procL->paramsnum = 0;
 	if(params){
 		int var;
@@ -667,6 +666,9 @@ int createProcTbl(TreePtr proc_part,symbolNode * tbl){
 			params = params->sibling;
 			free(typeL);
 		}
+	}
+	else{
+		procL->params = NULL;
 	}
 	if(procL->params){
 		varL = procL->tbl->var_part;
@@ -866,5 +868,297 @@ typeNode * getSimpleType(TreePtr node,symbolNode * tbl,int simpleID){
 	return p;
 }
 
-typeNode * getType(TreePtr node,symbolNode * tbl){return NULL;}
+typeNode * getExprType(TreePtr node,symbolNode * tbl){
+	constNode * constL;
+	typeNode * node1;
+	typeNode * node2;
+	varNode * varL;
+	typeNode * varLL;
+	procNode * procL;
+	switch(node->kind.expr){
+		case OpK:
+			switch(node->attr.op){
+				case NOT:
+					node1 = getExprType(node->child[0],tbl);
+					if(!node1) return NULL;
+					if(node1->type == cBoolT || node1->type == cIntT || node1->type == cCharT) return node1;
+					return NULL;
+					break;
+				case MINUS:
+					node1 = getExprType(node->child[0],tbl);
+					if(node->child[1]){
+						node2 = getExprType(node->child[1],tbl);
+						if(typeEqual(node1,node2) == 0) return NULL;
+						if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT) return node1;
+						return NULL;
+					}
+					else{
+						if(!node1) return NULL;
+						if(node1->type == cIntT || node1->type == cCharT || node1->type == cBoolT || node1->type == cRealT) return node1;
+						return NULL;
+					}
+					break;
+				case MUL:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT) return node1;
+					return NULL;
+					break;
+				case DIV:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT){
+						node1->type = cRealT;
+						return node1;
+					}
+					return NULL;
+					break;
+				case IDIV:
+				case MOD:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT) return node1;
+					return NULL;
+					break;
+				case PLUS:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT || node1->type == cStringT) return node1;
+					return NULL;
+					break;
+				case AND:
+				case OR:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cBoolT) return node1;
+					return NULL;
+					break;
+				case GE:
+				case GT:
+				case LE:
+				case LT:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT) return node1;
+					return NULL;
+					break;
+				case EQUAL:
+				case UNEQUAL:
+					node1 = getExprType(node->child[0],tbl);
+					node2 = getExprType(node->child[1],tbl);
+					if(typeEqual(node1,node2) == 0) return NULL;
+					if(node1->type == cIntT || node1->type == cCharT || node1->type == cRealT || node1->type == cBoolT || node1->type == cStringT) return node1;
+					return NULL;
+					break;
+			}	
+			break;
+		case FactorK:
+			node1 = (typeNode*)malloc(sizeof(typeNode));
+			if(node->child[1]){
+				switch(node->child[1]->kind.expr){
+					case CharK:
+					case StringK:
+						node1->type = cStringT;
+						node1->min = 0;
+						node1->max = 256;
+						break;
+					case IntK:
+						node1->type = cIntT;
+						node1->min = 0x80000000;
+						node1->max = 0x7FFFFFFF;
+						break;
+					case RealK:
+						node1->type = cRealT;
+						node1->min = 0;
+						node1->max = 0;
+						break;
+					case BoolK:
+						node1->type = cBoolT;
+						node1->min = 0;
+						node1->max = 1;
+						break;
+				}
+			}
+			else if(node->child[2]){
+				varL = lookupVarTbl(tbl,node->attr.name,0);
+				if(!varL){
+					free(node1);
+					return NULL;
+				}
+				if(varL->type != cArrayT){
+					free(node1);
+					return NULL;
+				}
+				node1->type = varL->subtype;
+				node1->min = varL->submin;
+				node1->max = varL->submax;
+			}
+			else if(node->child[3]){
+				varL = lookupVarTbl(tbl,node->attr.name,0);
+				if(!varL){
+					free(node1);
+					return NULL;
+				}
+				if(varL->type != cRecordT){
+					free(node1);
+					return NULL;
+				}
+				varLL = varL->member->next;
+				while(varLL){
+					if(strcmp(varLL->name,node->child[3]->attr.name) == 0) break;
+					varLL = varLL->next;
+				}
+				if(!varLL){
+					free(node1);
+					return NULL;
+				}
+				node1->type = varLL->type;
+				node1->min = varLL->min;
+				node1->max = varLL->max;
+			}
+			else if(node->child[0]){
+				procL = lookupProcTbl(tbl,node->attr.name,0);
+				if(!procL){
+					free(node1);
+					return NULL;
+				}
+				if(procL->returntype == cVoidT){
+					free(node1);
+					return NULL;
+				}
+				node1->type = procL->returntype;
+				node1->min = procL->returnmin;
+				node1->max = procL->returnmax;
+			}
+			else{
+				constL = lookupConstTbl(tbl,node->attr.name,0);
+				if(constL){
+					switch(constL->type){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+					}
+					return node1;
+				}
+				varL = lookupVarTbl(tbl,node->attr.name,0);
+				if(varL){
+					switch(varL->type){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+						default:
+							free(node1);
+							return NULL;
+					}
+					return node1;
+				}
+				procL = lookupProcTbl(tbl,node->attr.name,0);
+				if(procL){
+					switch(procL->returntype){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+						default:
+							free(node1);
+							return NULL;
+					}
+					return node1;
+				}
+				return NULL;
+			}
+			return node1;
+			break;
+	}
+	return NULL;
+}
 int checkType(TreePtr node,symbolNode * tbl){return 0;}
+
+int typeEqual(typeNode * node1,typeNode * node2){
+	varNode * a;
+	varNode * b;
+	if(!node1 || !node2) return 0;
+	if(node1->type != node2->type) return 0;
+	if(node1->type == cRecordT){
+		if(!node1->member || ! node2->member) return 0;
+		a = node1->member->next;
+		b = node2->member->next;
+		while(a && b){
+			if(a->type != b->type) return 0;
+			if(a->min != b->min) return 0;
+			if(a->max != b->max) return 0;
+			a = a->next;
+			b = b->next;
+		}
+		if(a) return 0;
+		if(b) return 0;
+		return 1;
+	}
+	if(node1->min != node2->min) return 0;
+	if(node1->max != node2->max) return 0;
+	if(node1->type == cArrayT){
+		if(node1->subtype != node2->subtype) return 0;
+		if(node1->submin != node2->submin) return 0;
+		if(node1->submax != node2->submax) return 0;
+	}
+	return 1;
+}

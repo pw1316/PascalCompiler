@@ -4,9 +4,6 @@ all:	pascal
 
 pascal:	$(objects)
 	gcc $(objects) -o pascal -ll
-	rm *.o
-	rm *.tab.*
-	rm scan.c
 
 main.o: main.c
 	gcc -c main.c -o main.o
@@ -31,3 +28,6 @@ code.o: code.c code.h
 
 util.o: util.c util.h
 	gcc -c util.c -o util.o
+
+clean:
+	rm *.o | scan.c | *.tab.*
