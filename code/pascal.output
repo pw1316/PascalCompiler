@@ -1,5 +1,4 @@
 State 24 conflicts: 2 shift/reduce
-State 184 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -127,90 +126,88 @@ Grammar
 
    84 compound_stmt: PBEGIN stmt_list END
 
-   85 if_stmt: IF expression THEN stmt else_clause
+   85 if_stmt: IF expression THEN stmt
+   86        | IF expression THEN stmt ELSE stmt
 
-   86 else_clause: ELSE stmt
-   87            | %empty
+   87 repeat_stmt: REPEAT stmt_list UNTIL expression
 
-   88 repeat_stmt: REPEAT stmt_list UNTIL expression
+   88 while_stmt: WHILE expression DO stmt
 
-   89 while_stmt: WHILE expression DO stmt
+   89 for_stmt: FOR ID ASSIGN expression direction expression DO stmt
 
-   90 for_stmt: FOR ID ASSIGN expression direction expression DO stmt
+   90 direction: TO
+   91          | DOWNTO
 
-   91 direction: TO
-   92          | DOWNTO
+   92 case_stmt: CASE expression OF case_expr_list END
 
-   93 case_stmt: CASE expression OF case_expr_list END
+   93 case_expr_list: case_expr_list case_expr
+   94               | case_expr
 
-   94 case_expr_list: case_expr_list case_expr
-   95               | case_expr
+   95 case_expr: const_value COLON stmt
+   96          | ID COLON stmt
 
-   96 case_expr: const_value COLON stmt SEMI
-   97          | ID COLON stmt SEMI
+   97 goto_stmt: GOTO INTEGER
 
-   98 goto_stmt: GOTO INTEGER
+   98 expression_list: expression_list COMMA expression
+   99                | expression
 
-   99 expression_list: expression_list COMMA expression
-  100                | expression
+  100 expression: expression GE expr
+  101           | expression GT expr
+  102           | expression LE expr
+  103           | expression LT expr
+  104           | expression EQUAL expr
+  105           | expression UNEQUAL expr
+  106           | expr
 
-  101 expression: expression GE expr
-  102           | expression GT expr
-  103           | expression LE expr
-  104           | expression LT expr
-  105           | expression EQUAL expr
-  106           | expression UNEQUAL expr
-  107           | expr
+  107 expr: expr PLUS term
+  108     | expr MINUS term
+  109     | expr OR term
+  110     | term
 
-  108 expr: expr PLUS term
-  109     | expr MINUS term
-  110     | expr OR term
-  111     | term
+  111 term: term MUL factor
+  112     | term DIV factor
+  113     | term MOD factor
+  114     | term AND factor
+  115     | term IDIV factor
+  116     | factor
 
-  112 term: term MUL factor
-  113     | term DIV factor
-  114     | term MOD factor
-  115     | term AND factor
-  116     | term IDIV factor
-  117     | factor
-
-  118 factor: ID args
-  119       | const_value
-  120       | LP expression RP
-  121       | NOT factor
-  122       | MINUS factor
-  123       | ID LB expression RB
-  124       | ID DOT ID
+  117 factor: ID args
+  118       | const_value
+  119       | LP expression RP
+  120       | NOT factor
+  121       | MINUS factor
+  122       | ID LB expression RB
+  123       | ID DOT ID
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-NOT (258) 121
-MUL (259) 112
-DIV (260) 113
-IDIV (261) 116
-MOD (262) 114
-AND (263) 115
-PLUS (264) 108
-MINUS (265) 109 122
-OR (266) 110
-DOT (267) 1 2 30 76 124
-COLON (268) 35 42 49 56 57 63 96 97
-COMMA (269) 36 99
-SEMI (270) 1 7 8 20 35 42 48 50 54 65 66 69 73 96 97
-ASSIGN (271) 74 75 76 90
-EQUAL (272) 7 8 20 105
-UNEQUAL (273) 106
-GE (274) 101
-GT (275) 102
-LE (276) 103
-LT (277) 104
-LP (278) 52 82 120
-RP (279) 52 82 120
-LB (280) 31 75 123
-RB (281) 31 75 123
+NOT (258) 120
+MUL (259) 111
+DIV (260) 112
+IDIV (261) 115
+MOD (262) 113
+AND (263) 114
+PLUS (264) 107
+MINUS (265) 108 121
+OR (266) 109
+DOT (267) 1 2 30 76 123
+COLON (268) 35 42 49 56 57 63 95 96
+COMMA (269) 36 98
+SEMI (270) 1 7 8 20 35 42 48 50 54 65 66 69 73
+ASSIGN (271) 74 75 76 89
+EQUAL (272) 7 8 20 104
+UNEQUAL (273) 105
+GE (274) 100
+GT (275) 101
+LE (276) 102
+LT (277) 103
+LP (278) 52 82 119
+RP (279) 52 82 119
+LB (280) 31 75 122
+RB (281) 31 75 122
 TRUE (282) 13
 FALSE (283) 14
 MAXINT (284) 15
@@ -231,140 +228,139 @@ ARRAY (298) 31
 RECORD (299) 32
 FUNCTION (300) 49
 PROCEDURE (301) 51
-OF (302) 31 93
+OF (302) 31 92
 PBEGIN (303) 60 84
-END (304) 32 60 84 93
-IF (305) 85
-THEN (306) 85
+END (304) 32 60 84 92
+IF (305) 85 86
+THEN (306) 85 86
 ELSE (307) 86
-REPEAT (308) 88
-UNTIL (309) 88
-WHILE (310) 89
-DO (311) 89 90
-FOR (312) 90
-TO (313) 91
-DOWNTO (314) 92
-CASE (315) 93
-GOTO (316) 98
-ID (317) 1 7 8 20 29 36 37 49 51 74 75 76 77 90 97 118 123 124
-INTEGER (318) 9 63 98
+REPEAT (308) 87
+UNTIL (309) 87
+WHILE (310) 88
+DO (311) 88 89
+FOR (312) 89
+TO (313) 90
+DOWNTO (314) 91
+CASE (315) 92
+GOTO (316) 97
+ID (317) 1 7 8 20 29 36 37 49 51 74 75 76 77 89 96 117 122 123
+INTEGER (318) 9 63 97
 REAL (319) 10
 CHAR (320) 11
 STRING (321) 12
+IFX (322)
 
 
 Nonterminals, with rules where they appear
 
-$accept (67)
+$accept (68)
     on left: 0
-program (68)
+program (69)
     on left: 1 2, on right: 0
-routing (69)
+routing (70)
     on left: 3, on right: 1 2 48 50
-routing_head (70)
+routing_head (71)
     on left: 4, on right: 3
-const_part (71)
+const_part (72)
     on left: 5 6, on right: 4
-const_expr_list (72)
+const_expr_list (73)
     on left: 7 8, on right: 5 7
-const_value (73)
-    on left: 9 10 11 12 13 14 15, on right: 7 8 30 96 119
-type_part (74)
+const_value (74)
+    on left: 9 10 11 12 13 14 15, on right: 7 8 30 95 118
+type_part (75)
     on left: 16 17, on right: 4
-type_decl_list (75)
+type_decl_list (76)
     on left: 18 19, on right: 16 18
-type_definition (76)
+type_definition (77)
     on left: 20, on right: 18 19
-type_decl (77)
+type_decl (78)
     on left: 21 22 23, on right: 20 42
-type_decl_simple (78)
+type_decl_simple (79)
     on left: 24 25 26 27 28 29 30, on right: 21 31 35 49 56 57
-type_decl_array (79)
+type_decl_array (80)
     on left: 31, on right: 22
-type_decl_record (80)
+type_decl_record (81)
     on left: 32, on right: 23
-field_decl_list (81)
+field_decl_list (82)
     on left: 33 34, on right: 32 33
-field_decl (82)
+field_decl (83)
     on left: 35, on right: 33 34
-name_list (83)
+name_list (84)
     on left: 36 37, on right: 35 36 42 58 59
-var_part (84)
+var_part (85)
     on left: 38 39, on right: 4
-var_decl_list (85)
+var_decl_list (86)
     on left: 40 41, on right: 38 40
-var_decl (86)
+var_decl (87)
     on left: 42, on right: 40 41
-routing_part (87)
+routing_part (88)
     on left: 43 44 45 46 47, on right: 4 43 44
-function_decl (88)
+function_decl (89)
     on left: 48, on right: 43 45
-function_head (89)
+function_head (90)
     on left: 49, on right: 48
-procedure_decl (90)
+procedure_decl (91)
     on left: 50, on right: 44 46
-procedure_head (91)
+procedure_head (92)
     on left: 51, on right: 50
-parameters (92)
+parameters (93)
     on left: 52 53, on right: 49 51
-para_decl_list (93)
+para_decl_list (94)
     on left: 54 55, on right: 52 54
-para_type_list (94)
+para_type_list (95)
     on left: 56 57, on right: 54 55
-var_para_list (95)
+var_para_list (96)
     on left: 58, on right: 56
-val_para_list (96)
+val_para_list (97)
     on left: 59, on right: 57
-routing_body (97)
+routing_body (98)
     on left: 60, on right: 3
-stmt_list (98)
-    on left: 61 62, on right: 60 61 84 88
-stmt (99)
-    on left: 63 64, on right: 61 85 86 89 90 96 97
-non_label_stmt (100)
+stmt_list (99)
+    on left: 61 62, on right: 60 61 84 87
+stmt (100)
+    on left: 63 64, on right: 61 85 86 88 89 95 96
+non_label_stmt (101)
     on left: 65 66 67 68 69 70 71 72 73, on right: 63 64
-assign_stmt (101)
+assign_stmt (102)
     on left: 74 75 76, on right: 65
-proc_stmt (102)
+proc_stmt (103)
     on left: 77 78 79 80 81, on right: 66
-args (103)
-    on left: 82 83, on right: 77 78 79 80 81 118
-compound_stmt (104)
+args (104)
+    on left: 82 83, on right: 77 78 79 80 81 117
+compound_stmt (105)
     on left: 84, on right: 67
-if_stmt (105)
-    on left: 85, on right: 68
-else_clause (106)
-    on left: 86 87, on right: 85
+if_stmt (106)
+    on left: 85 86, on right: 68
 repeat_stmt (107)
-    on left: 88, on right: 69
+    on left: 87, on right: 69
 while_stmt (108)
-    on left: 89, on right: 70
+    on left: 88, on right: 70
 for_stmt (109)
-    on left: 90, on right: 71
+    on left: 89, on right: 71
 direction (110)
-    on left: 91 92, on right: 90
+    on left: 90 91, on right: 89
 case_stmt (111)
-    on left: 93, on right: 72
+    on left: 92, on right: 72
 case_expr_list (112)
-    on left: 94 95, on right: 93 94
+    on left: 93 94, on right: 92 93
 case_expr (113)
-    on left: 96 97, on right: 94 95
+    on left: 95 96, on right: 93 94
 goto_stmt (114)
-    on left: 98, on right: 73
+    on left: 97, on right: 73
 expression_list (115)
-    on left: 99 100, on right: 82 99
+    on left: 98 99, on right: 82 98
 expression (116)
-    on left: 101 102 103 104 105 106 107, on right: 74 75 76 85 88
-    89 90 93 99 100 101 102 103 104 105 106 120 123
+    on left: 100 101 102 103 104 105 106, on right: 74 75 76 85 86
+    87 88 89 92 98 99 100 101 102 103 104 105 119 122
 expr (117)
-    on left: 108 109 110 111, on right: 101 102 103 104 105 106 107
-    108 109 110
+    on left: 107 108 109 110, on right: 100 101 102 103 104 105 106
+    107 108 109
 term (118)
-    on left: 112 113 114 115 116 117, on right: 108 109 110 111 112
-    113 114 115 116
+    on left: 111 112 113 114 115 116, on right: 107 108 109 110 111
+    112 113 114 115
 factor (119)
-    on left: 118 119 120 121 122 123 124, on right: 112 113 114 115
-    116 117 121 122
+    on left: 117 118 119 120 121 122 123, on right: 111 112 113 114
+    115 116 120 121
 
 
 State 0
@@ -770,7 +766,8 @@ State 40
 
 State 41
 
-   85 if_stmt: IF . expression THEN stmt else_clause
+   85 if_stmt: IF . expression THEN stmt
+   86        | IF . expression THEN stmt ELSE stmt
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -793,7 +790,7 @@ State 41
 
 State 42
 
-   88 repeat_stmt: REPEAT . stmt_list UNTIL expression
+   87 repeat_stmt: REPEAT . stmt_list UNTIL expression
 
     $default  reduce using rule 62 (stmt_list)
 
@@ -802,7 +799,7 @@ State 42
 
 State 43
 
-   89 while_stmt: WHILE . expression DO stmt
+   88 while_stmt: WHILE . expression DO stmt
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -825,14 +822,14 @@ State 43
 
 State 44
 
-   90 for_stmt: FOR . ID ASSIGN expression direction expression DO stmt
+   89 for_stmt: FOR . ID ASSIGN expression direction expression DO stmt
 
     ID  shift, and go to state 93
 
 
 State 45
 
-   93 case_stmt: CASE . expression OF case_expr_list END
+   92 case_stmt: CASE . expression OF case_expr_list END
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -855,7 +852,7 @@ State 45
 
 State 46
 
-   98 goto_stmt: GOTO . INTEGER
+   97 goto_stmt: GOTO . INTEGER
 
     INTEGER  shift, and go to state 95
 
@@ -1198,7 +1195,7 @@ State 81
 
 State 82
 
-  121 factor: NOT . factor
+  120 factor: NOT . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1218,7 +1215,7 @@ State 82
 
 State 83
 
-  122 factor: MINUS . factor
+  121 factor: MINUS . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1238,7 +1235,7 @@ State 83
 
 State 84
 
-  120 factor: LP . expression RP
+  119 factor: LP . expression RP
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1261,9 +1258,9 @@ State 84
 
 State 85
 
-  118 factor: ID . args
-  123       | ID . LB expression RB
-  124       | ID . DOT ID
+  117 factor: ID . args
+  122       | ID . LB expression RB
+  123       | ID . DOT ID
 
     DOT  shift, and go to state 134
     LP   shift, and go to state 76
@@ -1276,20 +1273,21 @@ State 85
 
 State 86
 
-  119 factor: const_value .
+  118 factor: const_value .
 
-    $default  reduce using rule 119 (factor)
+    $default  reduce using rule 118 (factor)
 
 
 State 87
 
-   85 if_stmt: IF expression . THEN stmt else_clause
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   85 if_stmt: IF expression . THEN stmt
+   86        | IF expression . THEN stmt ELSE stmt
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -1302,26 +1300,26 @@ State 87
 
 State 88
 
-  107 expression: expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
+  106 expression: expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
 
     PLUS   shift, and go to state 144
     MINUS  shift, and go to state 145
     OR     shift, and go to state 146
 
-    $default  reduce using rule 107 (expression)
+    $default  reduce using rule 106 (expression)
 
 
 State 89
 
-  111 expr: term .
-  112 term: term . MUL factor
-  113     | term . DIV factor
-  114     | term . MOD factor
-  115     | term . AND factor
-  116     | term . IDIV factor
+  110 expr: term .
+  111 term: term . MUL factor
+  112     | term . DIV factor
+  113     | term . MOD factor
+  114     | term . AND factor
+  115     | term . IDIV factor
 
     MUL   shift, and go to state 147
     DIV   shift, and go to state 148
@@ -1329,20 +1327,20 @@ State 89
     MOD   shift, and go to state 150
     AND   shift, and go to state 151
 
-    $default  reduce using rule 111 (expr)
+    $default  reduce using rule 110 (expr)
 
 
 State 90
 
-  117 term: factor .
+  116 term: factor .
 
-    $default  reduce using rule 117 (term)
+    $default  reduce using rule 116 (term)
 
 
 State 91
 
    61 stmt_list: stmt_list . stmt
-   88 repeat_stmt: REPEAT stmt_list . UNTIL expression
+   87 repeat_stmt: REPEAT stmt_list . UNTIL expression
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -1374,13 +1372,13 @@ State 91
 
 State 92
 
-   89 while_stmt: WHILE expression . DO stmt
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   88 while_stmt: WHILE expression . DO stmt
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -1393,20 +1391,20 @@ State 92
 
 State 93
 
-   90 for_stmt: FOR ID . ASSIGN expression direction expression DO stmt
+   89 for_stmt: FOR ID . ASSIGN expression direction expression DO stmt
 
     ASSIGN  shift, and go to state 154
 
 
 State 94
 
-   93 case_stmt: CASE expression . OF case_expr_list END
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   92 case_stmt: CASE expression . OF case_expr_list END
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -1419,9 +1417,9 @@ State 94
 
 State 95
 
-   98 goto_stmt: GOTO INTEGER .
+   97 goto_stmt: GOTO INTEGER .
 
-    $default  reduce using rule 98 (goto_stmt)
+    $default  reduce using rule 97 (goto_stmt)
 
 
 State 96
@@ -1749,7 +1747,7 @@ State 127
 State 128
 
    82 args: LP expression_list . RP
-   99 expression_list: expression_list . COMMA expression
+   98 expression_list: expression_list . COMMA expression
 
     COMMA  shift, and go to state 173
     RP     shift, and go to state 174
@@ -1757,13 +1755,13 @@ State 128
 
 State 129
 
-  100 expression_list: expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   99 expression_list: expression .
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -1772,7 +1770,7 @@ State 129
     LE       shift, and go to state 141
     LT       shift, and go to state 142
 
-    $default  reduce using rule 100 (expression_list)
+    $default  reduce using rule 99 (expression_list)
 
 
 State 130
@@ -1784,27 +1782,27 @@ State 130
 
 State 131
 
-  121 factor: NOT factor .
+  120 factor: NOT factor .
 
-    $default  reduce using rule 121 (factor)
+    $default  reduce using rule 120 (factor)
 
 
 State 132
 
-  122 factor: MINUS factor .
+  121 factor: MINUS factor .
 
-    $default  reduce using rule 122 (factor)
+    $default  reduce using rule 121 (factor)
 
 
 State 133
 
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
-  120 factor: LP expression . RP
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
+  119 factor: LP expression . RP
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -1817,14 +1815,14 @@ State 133
 
 State 134
 
-  124 factor: ID DOT . ID
+  123 factor: ID DOT . ID
 
     ID  shift, and go to state 176
 
 
 State 135
 
-  123 factor: ID LB . expression RB
+  122 factor: ID LB . expression RB
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1847,14 +1845,14 @@ State 135
 
 State 136
 
-  118 factor: ID args .
+  117 factor: ID args .
 
-    $default  reduce using rule 118 (factor)
+    $default  reduce using rule 117 (factor)
 
 
 State 137
 
-  105 expression: expression EQUAL . expr
+  104 expression: expression EQUAL . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1876,7 +1874,7 @@ State 137
 
 State 138
 
-  106 expression: expression UNEQUAL . expr
+  105 expression: expression UNEQUAL . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1898,7 +1896,7 @@ State 138
 
 State 139
 
-  101 expression: expression GE . expr
+  100 expression: expression GE . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1920,7 +1918,7 @@ State 139
 
 State 140
 
-  102 expression: expression GT . expr
+  101 expression: expression GT . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1942,7 +1940,7 @@ State 140
 
 State 141
 
-  103 expression: expression LE . expr
+  102 expression: expression LE . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1964,7 +1962,7 @@ State 141
 
 State 142
 
-  104 expression: expression LT . expr
+  103 expression: expression LT . expr
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -1986,7 +1984,8 @@ State 142
 
 State 143
 
-   85 if_stmt: IF expression THEN . stmt else_clause
+   85 if_stmt: IF expression THEN . stmt
+   86        | IF expression THEN . stmt ELSE stmt
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -2017,7 +2016,7 @@ State 143
 
 State 144
 
-  108 expr: expr PLUS . term
+  107 expr: expr PLUS . term
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2038,7 +2037,7 @@ State 144
 
 State 145
 
-  109 expr: expr MINUS . term
+  108 expr: expr MINUS . term
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2059,7 +2058,7 @@ State 145
 
 State 146
 
-  110 expr: expr OR . term
+  109 expr: expr OR . term
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2080,7 +2079,7 @@ State 146
 
 State 147
 
-  112 term: term MUL . factor
+  111 term: term MUL . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2100,7 +2099,7 @@ State 147
 
 State 148
 
-  113 term: term DIV . factor
+  112 term: term DIV . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2120,7 +2119,7 @@ State 148
 
 State 149
 
-  116 term: term IDIV . factor
+  115 term: term IDIV . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2140,7 +2139,7 @@ State 149
 
 State 150
 
-  114 term: term MOD . factor
+  113 term: term MOD . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2160,7 +2159,7 @@ State 150
 
 State 151
 
-  115 term: term AND . factor
+  114 term: term AND . factor
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2180,7 +2179,7 @@ State 151
 
 State 152
 
-   88 repeat_stmt: REPEAT stmt_list UNTIL . expression
+   87 repeat_stmt: REPEAT stmt_list UNTIL . expression
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2203,7 +2202,7 @@ State 152
 
 State 153
 
-   89 while_stmt: WHILE expression DO . stmt
+   88 while_stmt: WHILE expression DO . stmt
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -2234,7 +2233,7 @@ State 153
 
 State 154
 
-   90 for_stmt: FOR ID ASSIGN . expression direction expression DO stmt
+   89 for_stmt: FOR ID ASSIGN . expression direction expression DO stmt
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2257,7 +2256,7 @@ State 154
 
 State 155
 
-   93 case_stmt: CASE expression OF . case_expr_list END
+   92 case_stmt: CASE expression OF . case_expr_list END
 
     TRUE     shift, and go to state 26
     FALSE    shift, and go to state 27
@@ -2283,12 +2282,12 @@ State 156
 State 157
 
    74 assign_stmt: ID ASSIGN expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2303,12 +2302,12 @@ State 157
 State 158
 
    75 assign_stmt: ID LB expression . RB ASSIGN expression
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2448,7 +2447,7 @@ State 172
 
 State 173
 
-   99 expression_list: expression_list COMMA . expression
+   98 expression_list: expression_list COMMA . expression
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -2478,27 +2477,27 @@ State 174
 
 State 175
 
-  120 factor: LP expression RP .
+  119 factor: LP expression RP .
 
-    $default  reduce using rule 120 (factor)
+    $default  reduce using rule 119 (factor)
 
 
 State 176
 
-  124 factor: ID DOT ID .
+  123 factor: ID DOT ID .
 
-    $default  reduce using rule 124 (factor)
+    $default  reduce using rule 123 (factor)
 
 
 State 177
 
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
-  123 factor: ID LB expression . RB
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
+  122 factor: ID LB expression . RB
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2511,80 +2510,10 @@ State 177
 
 State 178
 
-  105 expression: expression EQUAL expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
-
-    PLUS   shift, and go to state 144
-    MINUS  shift, and go to state 145
-    OR     shift, and go to state 146
-
-    $default  reduce using rule 105 (expression)
-
-
-State 179
-
-  106 expression: expression UNEQUAL expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
-
-    PLUS   shift, and go to state 144
-    MINUS  shift, and go to state 145
-    OR     shift, and go to state 146
-
-    $default  reduce using rule 106 (expression)
-
-
-State 180
-
-  101 expression: expression GE expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
-
-    PLUS   shift, and go to state 144
-    MINUS  shift, and go to state 145
-    OR     shift, and go to state 146
-
-    $default  reduce using rule 101 (expression)
-
-
-State 181
-
-  102 expression: expression GT expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
-
-    PLUS   shift, and go to state 144
-    MINUS  shift, and go to state 145
-    OR     shift, and go to state 146
-
-    $default  reduce using rule 102 (expression)
-
-
-State 182
-
-  103 expression: expression LE expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
-
-    PLUS   shift, and go to state 144
-    MINUS  shift, and go to state 145
-    OR     shift, and go to state 146
-
-    $default  reduce using rule 103 (expression)
-
-
-State 183
-
-  104 expression: expression LT expr .
-  108 expr: expr . PLUS term
-  109     | expr . MINUS term
-  110     | expr . OR term
+  104 expression: expression EQUAL expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
 
     PLUS   shift, and go to state 144
     MINUS  shift, and go to state 145
@@ -2593,26 +2522,112 @@ State 183
     $default  reduce using rule 104 (expression)
 
 
+State 179
+
+  105 expression: expression UNEQUAL expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
+
+    PLUS   shift, and go to state 144
+    MINUS  shift, and go to state 145
+    OR     shift, and go to state 146
+
+    $default  reduce using rule 105 (expression)
+
+
+State 180
+
+  100 expression: expression GE expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
+
+    PLUS   shift, and go to state 144
+    MINUS  shift, and go to state 145
+    OR     shift, and go to state 146
+
+    $default  reduce using rule 100 (expression)
+
+
+State 181
+
+  101 expression: expression GT expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
+
+    PLUS   shift, and go to state 144
+    MINUS  shift, and go to state 145
+    OR     shift, and go to state 146
+
+    $default  reduce using rule 101 (expression)
+
+
+State 182
+
+  102 expression: expression LE expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
+
+    PLUS   shift, and go to state 144
+    MINUS  shift, and go to state 145
+    OR     shift, and go to state 146
+
+    $default  reduce using rule 102 (expression)
+
+
+State 183
+
+  103 expression: expression LT expr .
+  107 expr: expr . PLUS term
+  108     | expr . MINUS term
+  109     | expr . OR term
+
+    PLUS   shift, and go to state 144
+    MINUS  shift, and go to state 145
+    OR     shift, and go to state 146
+
+    $default  reduce using rule 103 (expression)
+
+
 State 184
 
-   85 if_stmt: IF expression THEN stmt . else_clause
+   85 if_stmt: IF expression THEN stmt .
+   86        | IF expression THEN stmt . ELSE stmt
 
     ELSE  shift, and go to state 219
 
-    ELSE      [reduce using rule 87 (else_clause)]
-    $default  reduce using rule 87 (else_clause)
-
-    else_clause  go to state 220
+    $default  reduce using rule 85 (if_stmt)
 
 
 State 185
 
-  108 expr: expr PLUS term .
-  112 term: term . MUL factor
-  113     | term . DIV factor
-  114     | term . MOD factor
-  115     | term . AND factor
-  116     | term . IDIV factor
+  107 expr: expr PLUS term .
+  111 term: term . MUL factor
+  112     | term . DIV factor
+  113     | term . MOD factor
+  114     | term . AND factor
+  115     | term . IDIV factor
+
+    MUL   shift, and go to state 147
+    DIV   shift, and go to state 148
+    IDIV  shift, and go to state 149
+    MOD   shift, and go to state 150
+    AND   shift, and go to state 151
+
+    $default  reduce using rule 107 (expr)
+
+
+State 186
+
+  108 expr: expr MINUS term .
+  111 term: term . MUL factor
+  112     | term . DIV factor
+  113     | term . MOD factor
+  114     | term . AND factor
+  115     | term . IDIV factor
 
     MUL   shift, and go to state 147
     DIV   shift, and go to state 148
@@ -2623,14 +2638,14 @@ State 185
     $default  reduce using rule 108 (expr)
 
 
-State 186
+State 187
 
-  109 expr: expr MINUS term .
-  112 term: term . MUL factor
-  113     | term . DIV factor
-  114     | term . MOD factor
-  115     | term . AND factor
-  116     | term . IDIV factor
+  109 expr: expr OR term .
+  111 term: term . MUL factor
+  112     | term . DIV factor
+  113     | term . MOD factor
+  114     | term . AND factor
+  115     | term . IDIV factor
 
     MUL   shift, and go to state 147
     DIV   shift, and go to state 148
@@ -2641,68 +2656,50 @@ State 186
     $default  reduce using rule 109 (expr)
 
 
-State 187
-
-  110 expr: expr OR term .
-  112 term: term . MUL factor
-  113     | term . DIV factor
-  114     | term . MOD factor
-  115     | term . AND factor
-  116     | term . IDIV factor
-
-    MUL   shift, and go to state 147
-    DIV   shift, and go to state 148
-    IDIV  shift, and go to state 149
-    MOD   shift, and go to state 150
-    AND   shift, and go to state 151
-
-    $default  reduce using rule 110 (expr)
-
-
 State 188
 
-  112 term: term MUL factor .
+  111 term: term MUL factor .
 
-    $default  reduce using rule 112 (term)
+    $default  reduce using rule 111 (term)
 
 
 State 189
 
-  113 term: term DIV factor .
+  112 term: term DIV factor .
 
-    $default  reduce using rule 113 (term)
+    $default  reduce using rule 112 (term)
 
 
 State 190
 
-  116 term: term IDIV factor .
-
-    $default  reduce using rule 116 (term)
-
-
-State 191
-
-  114 term: term MOD factor .
-
-    $default  reduce using rule 114 (term)
-
-
-State 192
-
-  115 term: term AND factor .
+  115 term: term IDIV factor .
 
     $default  reduce using rule 115 (term)
 
 
+State 191
+
+  113 term: term MOD factor .
+
+    $default  reduce using rule 113 (term)
+
+
+State 192
+
+  114 term: term AND factor .
+
+    $default  reduce using rule 114 (term)
+
+
 State 193
 
-   88 repeat_stmt: REPEAT stmt_list UNTIL expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   87 repeat_stmt: REPEAT stmt_list UNTIL expression .
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2711,25 +2708,25 @@ State 193
     LE       shift, and go to state 141
     LT       shift, and go to state 142
 
-    $default  reduce using rule 88 (repeat_stmt)
+    $default  reduce using rule 87 (repeat_stmt)
 
 
 State 194
 
-   89 while_stmt: WHILE expression DO stmt .
+   88 while_stmt: WHILE expression DO stmt .
 
-    $default  reduce using rule 89 (while_stmt)
+    $default  reduce using rule 88 (while_stmt)
 
 
 State 195
 
-   90 for_stmt: FOR ID ASSIGN expression . direction expression DO stmt
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   89 for_stmt: FOR ID ASSIGN expression . direction expression DO stmt
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2737,35 +2734,35 @@ State 195
     GT       shift, and go to state 140
     LE       shift, and go to state 141
     LT       shift, and go to state 142
-    TO       shift, and go to state 221
-    DOWNTO   shift, and go to state 222
+    TO       shift, and go to state 220
+    DOWNTO   shift, and go to state 221
 
-    direction  go to state 223
+    direction  go to state 222
 
 
 State 196
 
-   97 case_expr: ID . COLON stmt SEMI
+   96 case_expr: ID . COLON stmt
 
-    COLON  shift, and go to state 224
+    COLON  shift, and go to state 223
 
 
 State 197
 
-   96 case_expr: const_value . COLON stmt SEMI
+   95 case_expr: const_value . COLON stmt
 
-    COLON  shift, and go to state 225
+    COLON  shift, and go to state 224
 
 
 State 198
 
-   93 case_stmt: CASE expression OF case_expr_list . END
-   94 case_expr_list: case_expr_list . case_expr
+   92 case_stmt: CASE expression OF case_expr_list . END
+   93 case_expr_list: case_expr_list . case_expr
 
     TRUE     shift, and go to state 26
     FALSE    shift, and go to state 27
     MAXINT   shift, and go to state 28
-    END      shift, and go to state 226
+    END      shift, and go to state 225
     ID       shift, and go to state 196
     INTEGER  shift, and go to state 29
     REAL     shift, and go to state 30
@@ -2773,14 +2770,14 @@ State 198
     STRING   shift, and go to state 32
 
     const_value  go to state 197
-    case_expr    go to state 227
+    case_expr    go to state 226
 
 
 State 199
 
-   95 case_expr_list: case_expr .
+   94 case_expr_list: case_expr .
 
-    $default  reduce using rule 95 (case_expr_list)
+    $default  reduce using rule 94 (case_expr_list)
 
 
 State 200
@@ -2800,7 +2797,7 @@ State 200
     STRING   shift, and go to state 32
 
     const_value  go to state 86
-    expression   go to state 228
+    expression   go to state 227
     expr         go to state 88
     term         go to state 89
     factor       go to state 90
@@ -2810,14 +2807,14 @@ State 201
 
    75 assign_stmt: ID LB expression RB . ASSIGN expression
 
-    ASSIGN  shift, and go to state 229
+    ASSIGN  shift, and go to state 228
 
 
 State 202
 
    31 type_decl_array: ARRAY LB type_decl_simple . RB OF type_decl_simple
 
-    RB  shift, and go to state 230
+    RB  shift, and go to state 229
 
 
 State 203
@@ -2853,7 +2850,7 @@ State 205
     STRING        shift, and go to state 32
 
     const_value       go to state 113
-    type_decl_simple  go to state 231
+    type_decl_simple  go to state 230
 
 
 State 206
@@ -2868,7 +2865,7 @@ State 206
     CHAR     shift, and go to state 31
     STRING   shift, and go to state 32
 
-    const_value  go to state 232
+    const_value  go to state 231
 
 
 State 207
@@ -2884,7 +2881,7 @@ State 208
 
     ID  shift, and go to state 62
 
-    name_list  go to state 233
+    name_list  go to state 232
 
 
 State 209
@@ -2902,8 +2899,8 @@ State 210
    52 parameters: LP para_decl_list . RP
    54 para_decl_list: para_decl_list . SEMI para_type_list
 
-    SEMI  shift, and go to state 234
-    RP    shift, and go to state 235
+    SEMI  shift, and go to state 233
+    RP    shift, and go to state 234
 
 
 State 211
@@ -2917,14 +2914,14 @@ State 212
 
    56 para_type_list: var_para_list . COLON type_decl_simple
 
-    COLON  shift, and go to state 236
+    COLON  shift, and go to state 235
 
 
 State 213
 
    57 para_type_list: val_para_list . COLON type_decl_simple
 
-    COLON  shift, and go to state 237
+    COLON  shift, and go to state 236
 
 
 State 214
@@ -2946,7 +2943,7 @@ State 214
     STRING        shift, and go to state 32
 
     const_value       go to state 113
-    type_decl_simple  go to state 238
+    type_decl_simple  go to state 237
 
 
 State 215
@@ -2965,13 +2962,13 @@ State 216
 
 State 217
 
-   99 expression_list: expression_list COMMA expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   98 expression_list: expression_list COMMA expression .
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -2980,19 +2977,19 @@ State 217
     LE       shift, and go to state 141
     LT       shift, and go to state 142
 
-    $default  reduce using rule 99 (expression_list)
+    $default  reduce using rule 98 (expression_list)
 
 
 State 218
 
-  123 factor: ID LB expression RB .
+  122 factor: ID LB expression RB .
 
-    $default  reduce using rule 123 (factor)
+    $default  reduce using rule 122 (factor)
 
 
 State 219
 
-   86 else_clause: ELSE . stmt
+   86 if_stmt: IF expression THEN stmt ELSE . stmt
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -3008,7 +3005,7 @@ State 219
     ID            shift, and go to state 47
     INTEGER       shift, and go to state 48
 
-    stmt            go to state 239
+    stmt            go to state 238
     non_label_stmt  go to state 50
     assign_stmt     go to state 51
     proc_stmt       go to state 52
@@ -3023,28 +3020,21 @@ State 219
 
 State 220
 
-   85 if_stmt: IF expression THEN stmt else_clause .
+   90 direction: TO .
 
-    $default  reduce using rule 85 (if_stmt)
+    $default  reduce using rule 90 (direction)
 
 
 State 221
 
-   91 direction: TO .
+   91 direction: DOWNTO .
 
     $default  reduce using rule 91 (direction)
 
 
 State 222
 
-   92 direction: DOWNTO .
-
-    $default  reduce using rule 92 (direction)
-
-
-State 223
-
-   90 for_stmt: FOR ID ASSIGN expression direction . expression DO stmt
+   89 for_stmt: FOR ID ASSIGN expression direction . expression DO stmt
 
     NOT      shift, and go to state 82
     MINUS    shift, and go to state 83
@@ -3059,15 +3049,46 @@ State 223
     STRING   shift, and go to state 32
 
     const_value  go to state 86
-    expression   go to state 240
+    expression   go to state 239
     expr         go to state 88
     term         go to state 89
     factor       go to state 90
 
 
+State 223
+
+   96 case_expr: ID COLON . stmt
+
+    SYSP_WRITELN  shift, and go to state 35
+    SYSP_WRITE    shift, and go to state 36
+    SYSP_READLN   shift, and go to state 37
+    SYSP_READ     shift, and go to state 38
+    PBEGIN        shift, and go to state 39
+    IF            shift, and go to state 41
+    REPEAT        shift, and go to state 42
+    WHILE         shift, and go to state 43
+    FOR           shift, and go to state 44
+    CASE          shift, and go to state 45
+    GOTO          shift, and go to state 46
+    ID            shift, and go to state 47
+    INTEGER       shift, and go to state 48
+
+    stmt            go to state 240
+    non_label_stmt  go to state 50
+    assign_stmt     go to state 51
+    proc_stmt       go to state 52
+    compound_stmt   go to state 53
+    if_stmt         go to state 54
+    repeat_stmt     go to state 55
+    while_stmt      go to state 56
+    for_stmt        go to state 57
+    case_stmt       go to state 58
+    goto_stmt       go to state 59
+
+
 State 224
 
-   97 case_expr: ID COLON . stmt SEMI
+   95 case_expr: const_value COLON . stmt
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -3098,58 +3119,27 @@ State 224
 
 State 225
 
-   96 case_expr: const_value COLON . stmt SEMI
+   92 case_stmt: CASE expression OF case_expr_list END .
 
-    SYSP_WRITELN  shift, and go to state 35
-    SYSP_WRITE    shift, and go to state 36
-    SYSP_READLN   shift, and go to state 37
-    SYSP_READ     shift, and go to state 38
-    PBEGIN        shift, and go to state 39
-    IF            shift, and go to state 41
-    REPEAT        shift, and go to state 42
-    WHILE         shift, and go to state 43
-    FOR           shift, and go to state 44
-    CASE          shift, and go to state 45
-    GOTO          shift, and go to state 46
-    ID            shift, and go to state 47
-    INTEGER       shift, and go to state 48
-
-    stmt            go to state 242
-    non_label_stmt  go to state 50
-    assign_stmt     go to state 51
-    proc_stmt       go to state 52
-    compound_stmt   go to state 53
-    if_stmt         go to state 54
-    repeat_stmt     go to state 55
-    while_stmt      go to state 56
-    for_stmt        go to state 57
-    case_stmt       go to state 58
-    goto_stmt       go to state 59
+    $default  reduce using rule 92 (case_stmt)
 
 
 State 226
 
-   93 case_stmt: CASE expression OF case_expr_list END .
+   93 case_expr_list: case_expr_list case_expr .
 
-    $default  reduce using rule 93 (case_stmt)
+    $default  reduce using rule 93 (case_expr_list)
 
 
 State 227
 
-   94 case_expr_list: case_expr_list case_expr .
-
-    $default  reduce using rule 94 (case_expr_list)
-
-
-State 228
-
    76 assign_stmt: ID DOT ID ASSIGN expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -3161,7 +3151,7 @@ State 228
     $default  reduce using rule 76 (assign_stmt)
 
 
-State 229
+State 228
 
    75 assign_stmt: ID LB expression RB ASSIGN . expression
 
@@ -3178,34 +3168,34 @@ State 229
     STRING   shift, and go to state 32
 
     const_value  go to state 86
-    expression   go to state 243
+    expression   go to state 242
     expr         go to state 88
     term         go to state 89
     factor       go to state 90
 
 
-State 230
+State 229
 
    31 type_decl_array: ARRAY LB type_decl_simple RB . OF type_decl_simple
 
-    OF  shift, and go to state 244
+    OF  shift, and go to state 243
 
 
-State 231
+State 230
 
    35 field_decl: name_list COLON type_decl_simple . SEMI
 
-    SEMI  shift, and go to state 245
+    SEMI  shift, and go to state 244
 
 
-State 232
+State 231
 
    30 type_decl_simple: const_value DOT DOT const_value .
 
     $default  reduce using rule 30 (type_decl_simple)
 
 
-State 233
+State 232
 
    36 name_list: name_list . COMMA ID
    58 var_para_list: VAR name_list .
@@ -3215,7 +3205,7 @@ State 233
     $default  reduce using rule 58 (var_para_list)
 
 
-State 234
+State 233
 
    54 para_decl_list: para_decl_list SEMI . para_type_list
 
@@ -3223,21 +3213,43 @@ State 234
     ID   shift, and go to state 62
 
     name_list       go to state 209
-    para_type_list  go to state 246
+    para_type_list  go to state 245
     var_para_list   go to state 212
     val_para_list   go to state 213
 
 
-State 235
+State 234
 
    52 parameters: LP para_decl_list RP .
 
     $default  reduce using rule 52 (parameters)
 
 
-State 236
+State 235
 
    56 para_type_list: var_para_list COLON . type_decl_simple
+
+    TRUE          shift, and go to state 26
+    FALSE         shift, and go to state 27
+    MAXINT        shift, and go to state 28
+    SYST_BOOLEAN  shift, and go to state 105
+    SYST_CHAR     shift, and go to state 106
+    SYST_INTEGER  shift, and go to state 107
+    SYST_REAL     shift, and go to state 108
+    SYST_STRING   shift, and go to state 109
+    ID            shift, and go to state 112
+    INTEGER       shift, and go to state 29
+    REAL          shift, and go to state 30
+    CHAR          shift, and go to state 31
+    STRING        shift, and go to state 32
+
+    const_value       go to state 113
+    type_decl_simple  go to state 246
+
+
+State 236
+
+   57 para_type_list: val_para_list COLON . type_decl_simple
 
     TRUE          shift, and go to state 26
     FALSE         shift, and go to state 27
@@ -3259,49 +3271,27 @@ State 236
 
 State 237
 
-   57 para_type_list: val_para_list COLON . type_decl_simple
-
-    TRUE          shift, and go to state 26
-    FALSE         shift, and go to state 27
-    MAXINT        shift, and go to state 28
-    SYST_BOOLEAN  shift, and go to state 105
-    SYST_CHAR     shift, and go to state 106
-    SYST_INTEGER  shift, and go to state 107
-    SYST_REAL     shift, and go to state 108
-    SYST_STRING   shift, and go to state 109
-    ID            shift, and go to state 112
-    INTEGER       shift, and go to state 29
-    REAL          shift, and go to state 30
-    CHAR          shift, and go to state 31
-    STRING        shift, and go to state 32
-
-    const_value       go to state 113
-    type_decl_simple  go to state 248
-
-
-State 238
-
    49 function_head: FUNCTION ID parameters COLON type_decl_simple .
 
     $default  reduce using rule 49 (function_head)
 
 
+State 238
+
+   86 if_stmt: IF expression THEN stmt ELSE stmt .
+
+    $default  reduce using rule 86 (if_stmt)
+
+
 State 239
 
-   86 else_clause: ELSE stmt .
-
-    $default  reduce using rule 86 (else_clause)
-
-
-State 240
-
-   90 for_stmt: FOR ID ASSIGN expression direction expression . DO stmt
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+   89 for_stmt: FOR ID ASSIGN expression direction expression . DO stmt
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -3309,32 +3299,32 @@ State 240
     GT       shift, and go to state 140
     LE       shift, and go to state 141
     LT       shift, and go to state 142
-    DO       shift, and go to state 249
+    DO       shift, and go to state 248
+
+
+State 240
+
+   96 case_expr: ID COLON stmt .
+
+    $default  reduce using rule 96 (case_expr)
 
 
 State 241
 
-   97 case_expr: ID COLON stmt . SEMI
+   95 case_expr: const_value COLON stmt .
 
-    SEMI  shift, and go to state 250
+    $default  reduce using rule 95 (case_expr)
 
 
 State 242
 
-   96 case_expr: const_value COLON stmt . SEMI
-
-    SEMI  shift, and go to state 251
-
-
-State 243
-
    75 assign_stmt: ID LB expression RB ASSIGN expression .
-  101 expression: expression . GE expr
-  102           | expression . GT expr
-  103           | expression . LE expr
-  104           | expression . LT expr
-  105           | expression . EQUAL expr
-  106           | expression . UNEQUAL expr
+  100 expression: expression . GE expr
+  101           | expression . GT expr
+  102           | expression . LE expr
+  103           | expression . LT expr
+  104           | expression . EQUAL expr
+  105           | expression . UNEQUAL expr
 
     EQUAL    shift, and go to state 137
     UNEQUAL  shift, and go to state 138
@@ -3346,7 +3336,7 @@ State 243
     $default  reduce using rule 75 (assign_stmt)
 
 
-State 244
+State 243
 
    31 type_decl_array: ARRAY LB type_decl_simple RB OF . type_decl_simple
 
@@ -3365,40 +3355,40 @@ State 244
     STRING        shift, and go to state 32
 
     const_value       go to state 113
-    type_decl_simple  go to state 252
+    type_decl_simple  go to state 249
 
 
-State 245
+State 244
 
    35 field_decl: name_list COLON type_decl_simple SEMI .
 
     $default  reduce using rule 35 (field_decl)
 
 
-State 246
+State 245
 
    54 para_decl_list: para_decl_list SEMI para_type_list .
 
     $default  reduce using rule 54 (para_decl_list)
 
 
-State 247
+State 246
 
    56 para_type_list: var_para_list COLON type_decl_simple .
 
     $default  reduce using rule 56 (para_type_list)
 
 
-State 248
+State 247
 
    57 para_type_list: val_para_list COLON type_decl_simple .
 
     $default  reduce using rule 57 (para_type_list)
 
 
-State 249
+State 248
 
-   90 for_stmt: FOR ID ASSIGN expression direction expression DO . stmt
+   89 for_stmt: FOR ID ASSIGN expression direction expression DO . stmt
 
     SYSP_WRITELN  shift, and go to state 35
     SYSP_WRITE    shift, and go to state 36
@@ -3414,7 +3404,7 @@ State 249
     ID            shift, and go to state 47
     INTEGER       shift, and go to state 48
 
-    stmt            go to state 253
+    stmt            go to state 250
     non_label_stmt  go to state 50
     assign_stmt     go to state 51
     proc_stmt       go to state 52
@@ -3427,29 +3417,15 @@ State 249
     goto_stmt       go to state 59
 
 
-State 250
-
-   97 case_expr: ID COLON stmt SEMI .
-
-    $default  reduce using rule 97 (case_expr)
-
-
-State 251
-
-   96 case_expr: const_value COLON stmt SEMI .
-
-    $default  reduce using rule 96 (case_expr)
-
-
-State 252
+State 249
 
    31 type_decl_array: ARRAY LB type_decl_simple RB OF type_decl_simple .
 
     $default  reduce using rule 31 (type_decl_array)
 
 
-State 253
+State 250
 
-   90 for_stmt: FOR ID ASSIGN expression direction expression DO stmt .
+   89 for_stmt: FOR ID ASSIGN expression direction expression DO stmt .
 
-    $default  reduce using rule 90 (for_stmt)
+    $default  reduce using rule 89 (for_stmt)

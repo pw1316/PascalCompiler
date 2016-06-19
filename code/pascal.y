@@ -21,6 +21,8 @@ int yyerror(char*);
 %token SYSP_WRITELN SYSP_WRITE SYSP_READLN SYSP_READ
 %token PROGRAM TYPE VAR CONST ARRAY RECORD FUNCTION PROCEDURE OF PBEGIN END IF THEN ELSE REPEAT UNTIL WHILE DO FOR TO DOWNTO CASE GOTO
 %token ID INTEGER REAL CHAR STRING
+%nonassoc IFX
+%nonassoc ELSE
 %%
 program		:PROGRAM ID SEMI routing DOT
 				{	$$ = newModuleNode(ProgramK);
@@ -338,15 +340,16 @@ compound_stmt 	: PBEGIN stmt_list END
 					{	$$ = newStmtNode(CompK);
 						$$ -> child[0] = $2;}
 				;
-if_stmt : IF expression THEN stmt else_clause
+if_stmt : IF expression THEN stmt %prec IFX
+			{	$$ = newStmtNode(IfK);
+				$$ -> child[0] = $2;
+				$$ -> child[1] = $4;}
+		| IF expression THEN stmt ELSE stmt
 			{	$$ = newStmtNode(IfK);
 				$$ -> child[0] = $2;
 				$$ -> child[1] = $4;
-				$$ -> child[2] = $5;}
+				$$ -> child[2] = $6;}
 		;
-else_clause : ELSE stmt {$$ = $2;} 
-			| {$$ = NULL;}
-			;
 repeat_stmt : REPEAT stmt_list UNTIL expression
 				{	$$ = newStmtNode(RepeatK);
 					$$ -> child[0] = $2;
@@ -383,11 +386,11 @@ case_expr_list 	: case_expr_list case_expr
                     	else $$ = $2;}
 				| case_expr {$$ = $1;}
 				;
-case_expr 	: const_value COLON stmt SEMI
+case_expr 	: const_value COLON stmt
 				{	$$ = newExprNode(Case_exprK);
 					$$ -> child[0] = $1;
 					$$ -> child[1] = $3;}
-			| ID COLON stmt SEMI
+			| ID COLON stmt
 				{	$$ = newExprNode(Case_exprK);
 					$$ -> attr.name = (char*)$1;
 					$$ -> child[1] = $3;}

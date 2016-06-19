@@ -73,6 +73,14 @@ int main(int argc, char* argv[]){
 	}
 	printf("Create table Successfully!\n");
 
+	CRC = checkType(syntaxTree,symbolTable);
+	if(!CRC){
+		printf("type error\n");
+	}
+	else{
+		printf("type passed\n");
+	}
+
 	out = fopen("a.asm","w");
 	fprintf(out, ".text\n");
 	fprintf(out, "  j MAIN\n");

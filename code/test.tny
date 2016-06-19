@@ -2,12 +2,11 @@ program lala;
 const con=10;
 var
 	a,b,c:integer;
-function add(a,b:integer):integer;
+procedure print(a:integer);
 begin
-	add:=a+b;
+	write(a);
 end;
 begin
-	a:=con;
-	b:=5;
-	c:=add(a,b);
+	read(a);
+	print(a);
 end.

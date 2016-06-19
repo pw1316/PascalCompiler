@@ -14,9 +14,12 @@ FUNC0:
   sw $s6,24($sp)
   sw $s7,28($sp)
   addi $fp,$sp,0
-  addi $sp,$sp,-12
-  sw $t0,-4($fp)
-  lw $v0,-4($fp)
+  addi $sp,$sp,-4
+  sw $a0,-4($fp)
+  lw $t0,-4($fp)
+  addi $v0,$zero,1
+  li $a0,$t0
+  syscall
   addi $sp,$fp,0
   lw $s0,0($sp)
   lw $s1,4($sp)
@@ -46,10 +49,11 @@ MAIN:
   sw $s7,28($sp)
   addi $fp,$sp,0
   addi $sp,$sp,-12
-  addi $t0,$zero,10
-  sw $t0,-4($fp)
-  addi $t0,$zero,5
-  sw $t0,-8($fp)
+  addi $v0,$zero,5
+  syscall
+  sw $v0,-4($fp)
+  lw $t0,-4($fp)
+  addi $a0,$t0,0
   addi $sp,$sp,-40
   sw $t0,0($sp)
   sw $t1,4($sp)
@@ -73,8 +77,6 @@ MAIN:
   lw $t8,32($sp)
   lw $t9,36($sp)
   addi $sp,$sp,40
-  addi $t0,$v0,0
-  sw $t0,-12($fp)
   addi $sp,$fp,0
   lw $s0,0($sp)
   lw $s1,4($sp)

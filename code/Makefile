@@ -5,7 +5,7 @@ all:	pascal
 pascal:	$(objects)
 	gcc $(objects) -o pascal -ll
 
-main.o: main.c
+main.o: main.c pascal.tab.h
 	gcc -c main.c -o main.o
 
 scan.o:	scan.c scan.h

@@ -690,8 +690,12 @@ int createProcTbl(TreePtr proc_part,symbolNode * tbl){
 }
 
 procNode * lookupProcTbl(symbolNode * tbl,char * name,int check){
-	procNode * p = tbl->proc_part->next;
+	procNode * p;
 	procNode * oldp = NULL;
+	if(tbl->proc_part == NULL){
+		return NULL;	
+	}
+	p = tbl->proc_part->next;
 	/*find*/
 	if(check == 0){
 		while(p){
@@ -873,7 +877,7 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 	typeNode * node1;
 	typeNode * node2;
 	varNode * varL;
-	typeNode * varLL;
+	varNode * varLL;
 	procNode * procL;
 	switch(node->kind.expr){
 		case OpK:
@@ -988,8 +992,17 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 			else if(node->child[2]){
 				varL = lookupVarTbl(tbl,node->attr.name,0);
 				if(!varL){
-					free(node1);
-					return NULL;
+					if(tbl == symbolTable){
+						free(node1);
+						return NULL;
+					}
+					else{
+						varL = lookupVarTbl(symbolTable,node->attr.name,0);
+						if(!varL){
+							free(node1);
+							return NULL;
+						}
+					}
 				}
 				if(varL->type != cArrayT){
 					free(node1);
@@ -1002,8 +1015,17 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 			else if(node->child[3]){
 				varL = lookupVarTbl(tbl,node->attr.name,0);
 				if(!varL){
-					free(node1);
-					return NULL;
+					if(tbl == symbolTable){
+						free(node1);
+						return NULL;
+					}
+					else{
+						varL = lookupVarTbl(symbolTable,node->attr.name,0);
+						if(!varL){
+							free(node1);
+							return NULL;
+						}
+					}
 				}
 				if(varL->type != cRecordT){
 					free(node1);
@@ -1023,7 +1045,7 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 				node1->max = varLL->max;
 			}
 			else if(node->child[0]){
-				procL = lookupProcTbl(tbl,node->attr.name,0);
+				procL = lookupProcTbl(symbolTable,node->attr.name,0);
 				if(!procL){
 					free(node1);
 					return NULL;
@@ -1124,6 +1146,98 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 					}
 					return node1;
 				}
+				if(tbl == symbolTable){
+					free(node1);
+					return NULL;
+				}
+				constL = lookupConstTbl(symbolTable,node->attr.name,0);
+				if(constL){
+					switch(constL->type){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+					}
+					return node1;
+				}
+				varL = lookupVarTbl(symbolTable,node->attr.name,0);
+				if(varL){
+					switch(varL->type){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+						default:
+							free(node1);
+							return NULL;
+					}
+					return node1;
+				}
+				procL = lookupProcTbl(symbolTable,node->attr.name,0);
+				if(procL){
+					switch(procL->returntype){
+						case cCharT:
+						case cStringT:
+							node1->type = cStringT;
+							node1->min = 0;
+							node1->max = 256;
+							break;
+						case cIntT:
+							node1->type = cIntT;
+							node1->min = 0x80000000;
+							node1->max = 0x7FFFFFFF;
+							break;
+						case cRealT:
+							node1->type = cRealT;
+							node1->min = 0;
+							node1->max = 0;
+							break;
+						case cBoolT:
+							node1->type = cBoolT;
+							node1->min = 0;
+							node1->max = 1;
+							break;
+						default:
+							free(node1);
+							return NULL;
+					}
+					return node1;
+				}
+				free(node1);
 				return NULL;
 			}
 			return node1;
@@ -1131,7 +1245,175 @@ typeNode * getExprType(TreePtr node,symbolNode * tbl){
 	}
 	return NULL;
 }
-int checkType(TreePtr node,symbolNode * tbl){return 0;}
+
+int checkType(TreePtr node,symbolNode * tbl){
+	int CRC = 1;
+	varNode * vID;
+	typeNode * type1;
+	typeNode * type2;
+	procNode * procL;
+	TreePtr arg;
+	varNode * params;
+	int i;
+	if(!node) return 1;
+	switch(node->nodekind){
+		case ModuleK:
+			switch(node->kind.module){
+				case RoutingK:
+					if(node->child[0]->child[3]) CRC = checkType(node->child[0]->child[3],tbl);
+					if(!CRC) return 0;
+					return checkType(node->child[1],tbl);
+					break;
+				case ProcedureK:
+				case FunctionK:
+					CRC = checkType(node->child[1],tbl);
+					if(!CRC) return 0;
+					return checkType(node->sibling,tbl);
+					break;
+			}
+			break;
+		case StmtK:
+			switch(node->kind.stmt){
+				case AssignK:
+					if(node->child[0]){
+						vID = lookupVarTbl(tbl,node->attr.name,0);
+						if(!vID){
+							vID = lookupVarTbl(symbolTable,node->attr.name,0);
+						}
+						if(!vID) type1 = NULL;
+						else{
+							type1 = (typeNode * )malloc(sizeof(typeNode));
+							type1->type = vID->type;
+							type1->subtype = vID->subtype;
+							type1->min = vID->min;
+							type1->max = vID->max;
+							type1->submin = vID->submin;
+							type1->submax = vID->submax;
+							type1->member = vID->member;
+						}
+						type2 = getExprType(node->child[0],tbl);
+						CRC = typeEqual(type1,type2);
+						free(type1);
+						free(type2);
+						if(!CRC) return 0;
+					}
+					else if(node->child[1]){
+						vID = lookupVarTbl(tbl,node->attr.name,0);
+						if(!vID){
+							vID = lookupVarTbl(symbolTable,node->attr.name,0);
+						}
+						if(!vID) return 0;
+						if(vID->type != cArrayT) return 0;
+						type1 = getExprType(node->child[1],tbl);
+						if(type1->type != cIntT){
+							free(type1);
+							return 0;
+						}
+						type1 = getExprType(node->child[2],tbl);
+						if(type1->type != vID->subtype) return 0;
+						if(type1->min != vID->submin) return 0;
+						if(type1->max != vID->submax) return 0;
+					}
+					else if(node->child[3]){
+						vID = lookupVarTbl(tbl,node->attr.name,0);
+						if(!vID){
+							vID = lookupVarTbl(symbolTable,node->attr.name,0);
+						}
+						if(!vID) return 0;
+						if(vID->type != cRecordT) return 0;
+						vID = vID->member->next;
+						while(vID){
+							if(strcmp(vID->name,node->child[3]->attr.name) == 0){
+								break;
+							}
+							vID = vID->next;
+						}
+						if(!vID) return 0;
+						type1 = getExprType(node->child[4],tbl);
+						if(type1->type != vID->type) return 0;
+						if(type1->min != vID->min) return 0;
+						if(type1->max != vID->max) return 0;
+					}
+					break;
+				case ProcK:
+					procL = lookupProcTbl(symbolTable,node->attr.name,0);
+					if(!procL){
+						if(strcmp(node->attr.name,"read") == 0) return checkType(node->sibling,tbl);
+						if(strcmp(node->attr.name,"readln") == 0) return checkType(node->sibling,tbl);
+						if(strcmp(node->attr.name,"write") == 0) return checkType(node->sibling,tbl);
+						if(strcmp(node->attr.name,"writeln") == 0) return checkType(node->sibling,tbl);
+					}
+					i = procL->paramsnum;
+					arg = node->child[0];
+					params = procL->params->next;
+					while(i){
+						if(!arg || !params) return 0;
+						type1 = getExprType(arg,tbl);
+						if(!type1) return 0;
+						if(type1->type != params->type){free(type1);return 0;}
+						if(type1->min != params->min){free(type1);return 0;}
+						if(type1->max != params->max){free(type1);return 0;}
+						arg = arg->sibling;
+						params = params->next;
+						i--;
+						free(type1);
+					}
+					if(arg || params) return 0;
+					break;
+				case CompK:
+					CRC = checkType(node->child[0],tbl);
+					if(!CRC) return 0;
+					break;
+				case IfK:
+					type1 = getExprType(node->child[0],tbl);
+					if(!type1) return 0;
+					if(type1->type != cIntT && type1->type != cCharT && type1->type != cBoolT){
+						free(type1);
+						return 0;
+					}
+					CRC = checkType(node->child[1],tbl);
+					if(!CRC) return 0;
+					if(node->child[2]){
+						CRC = checkType(node->child[2],tbl);
+						if(!CRC) return 0;
+					}
+					break;
+				case RepeatK:
+					CRC = checkType(node->child[0],tbl);
+					if(!CRC) return 0;
+					type1 = getExprType(node->child[1],tbl);
+					if(!type1) return 0;
+					if(type1->type != cIntT && type1->type != cCharT && type1->type != cBoolT){
+						free(type1);
+						return 0;
+					}
+					free(type1);
+					break;
+				case WhileK:
+					CRC = checkType(node->child[1],tbl);
+					if(!CRC) return 0;
+					type1 = getExprType(node->child[0],tbl);
+					if(!type1) return 0;
+					if(type1->type != cIntT && type1->type != cCharT && type1->type != cBoolT){
+						free(type1);
+						return 0;
+					}
+					free(type1);
+					break;
+				case ForK:
+
+					break;
+				case CaseK:
+					break;
+			}
+			return checkType(node->sibling,tbl);
+			break;
+		case DeclK:
+			break;
+		case ExprK:
+			break;
+	}
+}
 
 int typeEqual(typeNode * node1,typeNode * node2){
 	varNode * a;
