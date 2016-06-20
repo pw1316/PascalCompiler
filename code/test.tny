@@ -1,12 +1,26 @@
 program lala;
-const con=10;
 var
-	a,b,c:integer;
-procedure print(a:integer);
+	m,n,tmp:integer;
+function fmod(a,b:integer):integer;
 begin
-	write(a);
+	fmod:=a div b;
 end;
 begin
-	read(a);
-	print(a);
+	read(n);
+	read(m);
+	if n < m then begin
+		tmp:=n;
+		n:=m;
+		m:=tmp;
+	end
+	while m>0 do begin
+		tmp:=fmod(n,m);
+		n:=m;
+		m:=tmp;
+	end
+	tmp:=10;
+	repeat
+		writeln(n);
+		tmp:=tmp - 1;
+	until tmp=0;
 end.

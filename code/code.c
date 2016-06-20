@@ -584,7 +584,6 @@ void generateExpr(TreePtr node,symbolNode * tbl,int start,int end){
 			else if(node->child[0]){/*ID(args)*/
 				procL = lookupProcTbl(tbl,node->attr.name,0);
 				if(procL){
-					fprintf(out, "name:%s\n", procL->name);
 					i = 0;
 					varL = procL->params->next;
 					arg = node->child[0];
@@ -888,7 +887,7 @@ void generateExpr(TreePtr node,symbolNode * tbl,int start,int end){
 					else{
 						generateExpr(node->child[0],tbl,start,end);
 						generateExpr(node->child[1],tbl,(start+1)%10,end);
-						fprintf(out, "  slt $t%d,$t%d,$t%d\n", start,start,(start+1)%10);
+						fprintf(out, "  sub $t%d,$t%d,$t%d\n", start,start,(start+1)%10);
 					}
 					break;
 				case UNEQUAL:

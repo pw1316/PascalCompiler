@@ -1,39 +1,5 @@
 .text
   j MAIN
-FUNC0:
-  addi $sp,$sp,-8
-  sw $ra,4($sp)
-  sw $fp,0($sp)
-  addi $sp,$sp,-32
-  sw $s0,0($sp)
-  sw $s1,4($sp)
-  sw $s2,8($sp)
-  sw $s3,12($sp)
-  sw $s4,16($sp)
-  sw $s5,20($sp)
-  sw $s6,24($sp)
-  sw $s7,28($sp)
-  addi $fp,$sp,0
-  addi $sp,$sp,-4
-  sw $a0,-4($fp)
-  lw $t0,-4($fp)
-  addi $v0,$zero,1
-  li $a0,$t0
-  syscall
-  addi $sp,$fp,0
-  lw $s0,0($sp)
-  lw $s1,4($sp)
-  lw $s2,8($sp)
-  lw $s3,12($sp)
-  lw $s4,16($sp)
-  lw $s5,20($sp)
-  lw $s6,24($sp)
-  lw $s7,28($sp)
-  addi $sp,$sp,32
-  lw $fp,0($sp)
-  lw $ra,4($sp)
-  addi $sp,$sp,8
-  jr $ra
 MAIN:
   addi $sp,$sp,-8
   sw $ra,4($sp)
@@ -48,35 +14,46 @@ MAIN:
   sw $s6,24($sp)
   sw $s7,28($sp)
   addi $fp,$sp,0
-  addi $sp,$sp,-12
-  addi $v0,$zero,5
-  syscall
-  sw $v0,-4($fp)
-  lw $t0,-4($fp)
-  addi $a0,$t0,0
-  addi $sp,$sp,-40
+  addi $sp,$sp,-4
+  addi $t0,$zero,1
+  addi $t1,$zero,2
+  addi $t2,$zero,3
+  addi $t3,$zero,4
+  addi $t4,$zero,5
+  addi $t5,$zero,6
+  addi $t6,$zero,7
+  addi $t7,$zero,8
+  addi $t8,$zero,9
+  addi $sp,$sp,-4
   sw $t0,0($sp)
-  sw $t1,4($sp)
-  sw $t2,8($sp)
-  sw $t3,12($sp)
-  sw $t4,16($sp)
-  sw $t5,20($sp)
-  sw $t6,24($sp)
-  sw $t7,28($sp)
-  sw $t8,32($sp)
-  sw $t9,36($sp)
-  jal FUNC0
+  addi $t9,$zero,10
+  addi $t0,$zero,11
+  add $t9,$t9,$t0
+  addi $sp,$sp,-4
+  sw $t1,0($sp)
+  addi $t0,$zero,12
+  addi $t1,$zero,13
+  add $t0,$t0,$t1
+  lw $t1,0($sp)
+  addi $sp,$sp,4
+  mult $t9,$t0
+  mflo $t9
   lw $t0,0($sp)
-  lw $t1,4($sp)
-  lw $t2,8($sp)
-  lw $t3,12($sp)
-  lw $t4,16($sp)
-  lw $t5,20($sp)
-  lw $t6,24($sp)
-  lw $t7,28($sp)
-  lw $t8,32($sp)
-  lw $t9,36($sp)
-  addi $sp,$sp,40
+  addi $sp,$sp,4
+  add $t8,$t8,$t9
+  mult $t7,$t8
+  mflo $t7
+  add $t6,$t6,$t7
+  mult $t5,$t6
+  mflo $t5
+  add $t4,$t4,$t5
+  mult $t3,$t4
+  mflo $t3
+  add $t2,$t2,$t3
+  mult $t1,$t2
+  mflo $t1
+  add $t0,$t0,$t1
+  sw $t0,-4($fp)
   addi $sp,$fp,0
   lw $s0,0($sp)
   lw $s1,4($sp)

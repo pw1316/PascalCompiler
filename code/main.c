@@ -64,7 +64,10 @@ int main(int argc, char* argv[]){
 	symbolTable->proc_part->next = NULL;
 
 	CRC = analyze(syntaxTree);
-	if(CRC) printf("Create table failed!\n");
+	if(CRC){ 
+		printf("Create table failed!\n");
+		return 1;
+	}
 	else{
 		printConstTbl(symbolTable,0);
 		printTypeTbl(symbolTable,0);
@@ -76,6 +79,7 @@ int main(int argc, char* argv[]){
 	CRC = checkType(syntaxTree,symbolTable);
 	if(!CRC){
 		printf("type error\n");
+		return 1;
 	}
 	else{
 		printf("type passed\n");
@@ -91,6 +95,6 @@ int main(int argc, char* argv[]){
 		StrBuf--;
 	}
 	fclose(out);
-	printVarTbl(symbolTable,0);
+	printf("Code gen Done!\n");
 	return 0;
 }

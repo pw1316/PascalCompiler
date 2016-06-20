@@ -30,4 +30,4 @@ util.o: util.c util.h
 	gcc -c util.c -o util.o
 
 clean:
-	rm *.o | scan.c | *.tab.*
+	rm *.o

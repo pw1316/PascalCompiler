@@ -1401,7 +1401,6 @@ int checkType(TreePtr node,symbolNode * tbl){
 					free(type1);
 					break;
 				case ForK:
-
 					break;
 				case CaseK:
 					break;
@@ -1409,8 +1408,10 @@ int checkType(TreePtr node,symbolNode * tbl){
 			return checkType(node->sibling,tbl);
 			break;
 		case DeclK:
+			return 1;
 			break;
 		case ExprK:
+			return 1;
 			break;
 	}
 }
